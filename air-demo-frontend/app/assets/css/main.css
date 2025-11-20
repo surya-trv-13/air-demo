@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+:root {
+	/* Override Nuxt UI primary color */
+	--color-primary-50: #e6f0ff;
+	--color-primary-100: #b3d1ff;
+	--color-primary-200: #80b8ff;
+	--color-primary-300: #4d9fff;
+	--color-primary-400: #1a86ff;
+	--color-primary-500: #003087;
+	--color-primary-600: #002870;
+	--color-primary-700: #002059;
+	--color-primary-800: #001842;
+	--color-primary-900: #00102b;
+	--color-primary-950: #000814;
+
+	/* These are what Nuxt UI actually uses */
+	--ui-primary: #003087;
+	--ui-bg: #f1f5f9;
+}
+
+[data-active="true"] {
+	background-color: #003087 !important;
+	color: white !important;
+	font-weight: 600 !important;
+}
+
+[data-active="true"] svg,
+[data-active="true"] .icon {
+	color: white !important;
+}
+
+/* Optional: Hover effects */
+.navigation-link {
+	transition: all 0.2s ease;
+}
+
+.navigation-link:hover:not([data-active="true"]) {
+	background-color: #f3f4f6;
+	color: #003087;
+}
