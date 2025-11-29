@@ -23,19 +23,19 @@ export const orderColumn: TableColumn<Order>[] = [
 			}),
 	},
 	{
-		accessorKey: "customer",
+		accessorKey: "customerName",
 		header: "Customer",
 	},
 	{
-		accessorKey: "location",
+		accessorKey: "address",
 		header: "Location",
 	},
 	{
-		accessorKey: "startTime",
+		accessorKey: "orderDate",
 		header: "Start Time",
 	},
 	{
-		accessorKey: "plant",
+		accessorKey: "mainPlantName",
 		header: "Plant",
 	},
 	{
@@ -43,20 +43,20 @@ export const orderColumn: TableColumn<Order>[] = [
 		header: "Product Code",
 	},
 	{
-		accessorKey: "orderQty",
+		accessorKey: "orderQuantity",
 		header: "Order Quantity",
 	},
 	{
-		accessorKey: "type",
+		accessorKey: "testType",
 		header: "Type",
 		cell: ({ row }) => {
 			const color = {
 				normal: "info" as const,
 				merge: "neutral" as const,
-			}[row.getValue("type") as string];
+			}[row.getValue("testType") as string];
 
 			return h(UBadge, { class: "capitalize", variant: "subtle", color }, () =>
-				row.getValue("type")
+				row.getValue("testType")
 			);
 		},
 	},
@@ -79,7 +79,7 @@ export const orderColumn: TableColumn<Order>[] = [
 	},
 ];
 
-export const orderData = [
+export let orderData = [
 	{
 		id: "20301",
 		customer: "Raymond Pte Lte",
@@ -129,23 +129,23 @@ export const orderData = [
 export const statusSelectOptions = ref<Partial<InputMenuItem>[]>([
 	{
 		label: "Accepted",
-		value: "accepted",
+		value: "ACCEPTED",
 	},
 	{
 		label: "Rejected",
-		value: "rejected",
+		value: "REJECTED",
 	},
 	{
 		label: "Started",
-		value: "started",
+		value: "STARTED",
 	},
 	{
 		label: "Pending",
-		value: "pending",
+		value: "PENDING",
 	},
 	{
 		label: "Completed",
-		value: "completed",
+		value: "COMPLETED",
 	},
 ]);
 
@@ -280,5 +280,146 @@ export const projectSelectMenu = ref<Partial<InputMenuItem>[]>([
 	{
 		label: "Project 9",
 		id: 9,
+	},
+]);
+
+export const dischargeMethodSelectMenu = ref<Partial<InputMenuItem>[]>([
+	{
+		id: 2,
+		label: "Chute",
+	},
+	{
+		id: 6,
+		label: "Grout Pump",
+	},
+	{
+		id: 7,
+		label: "Kerbing",
+	},
+	{
+		id: 5,
+		label: "Line Pump",
+	},
+	{
+		id: 8,
+		label: "Other",
+	},
+	{
+		id: 1,
+		label: "Pump",
+	},
+	{
+		id: 9,
+		label: "Skip",
+	},
+	{
+		id: 3,
+		label: "Wheelbarrows",
+	},
+]);
+
+export const productSelectMenuData = ref<Partial<InputMenuItem>[]>([
+	{
+		id: 1,
+		label: "Product 1",
+		description: "10 MPa 10mm",
+	},
+	{
+		id: 2,
+		label: "Product 2",
+		description: " 10 MPa 16mm",
+	},
+	{
+		id: 3,
+		label: "Product 3",
+		description: "10 MPa 20mm",
+	},
+	{
+		id: 4,
+		label: "Product 4",
+		description: "1710",
+	},
+	{
+		id: 5,
+		label: "Product 5",
+		description: "15 MPa 20mm",
+	},
+]);
+
+export const structureSelectMenu = ref<Partial<InputMenuItem>[]>([
+	{
+		id: 7,
+		label: "Beam",
+	},
+	{
+		id: 4,
+		label: "Bored-Pile",
+	},
+	{
+		id: 5,
+		label: "Bored-Pile(King Post)",
+	},
+	{
+		id: 6,
+		label: "D/Wall",
+	},
+	{
+		id: 11,
+		label: "Bored-Pile (Test Pile)",
+	},
+	{
+		id: 2,
+		label: "Column",
+	},
+	{
+		id: 8,
+		label: "Pile-Cap",
+	},
+	{
+		id: 10,
+		label: "Precast",
+	},
+	{
+		id: 1,
+		label: "Slab",
+	},
+	{
+		id: 12,
+		label: "Slab (ES/PT)",
+	},
+	{
+		id: 3,
+		label: "Wall",
+	},
+	{
+		id: 9,
+		label: "Others",
+	},
+	{
+		id: 13,
+		label: "Slope",
+	},
+]);
+
+export const plantSelectMenu = ref<Partial<InputMenuItem>[]>([
+	{
+		label: "Plant 1",
+		id: 1,
+	},
+	{
+		label: "Plant 2",
+		id: 2,
+	},
+	{
+		label: "Plant 3",
+		id: 3,
+	},
+	{
+		label: "Plant 4",
+		id: 4,
+	},
+	{
+		label: "Plant 5",
+		id: 5,
 	},
 ]);

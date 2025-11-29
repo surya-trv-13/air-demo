@@ -2,26 +2,60 @@
 	import * as z from "zod";
 
 	const schema = z.object({
-		associateProduct: z.string(),
-		associateProductQty: z.string(),
 		sms: z.boolean(),
 		email: z.boolean(),
 		frequency: z.string(),
 		remarks: z.string(),
+		notification: z.string(),
 	});
 
 	type Schema = z.output<typeof schema>;
 
-	const additionalInfoState = reactive<Partial<Schema>>({
-		associateProduct: undefined,
-		associateProductQty: undefined,
+	const associateProductSchema = z.object({
+		associateProductId: z.number(),
+		quantity: z.number(),
+	});
+
+	type AssociateProductSchema = z.output<typeof associateProductSchema>;
+
+	const additionalInfoState = reactive<
+		Partial<Schema> & { associateProducts: Partial<AssociateProductSchema>[] }
+	>({
+		associateProducts: [
+			{
+				associateProductId: undefined,
+				quantity: undefined,
+			},
+		],
 		sms: false,
 		email: false,
 		frequency: undefined,
 		remarks: undefined,
+		notification: "NONE",
 	});
 
+	const handleAdd = () => {
+		if (!additionalInfoState.associateProducts) {
+			additionalInfoState.associateProducts = [];
+		}
+		additionalInfoState.associateProducts.push({
+			associateProductId: undefined,
+			quantity: undefined,
+		});
+	};
+
+	const handleRemove = (index: number) => {
+		if (additionalInfoState.associateProducts) {
+			additionalInfoState.associateProducts.splice(index, 1);
+		}
+	};
+
 	const getAddInfoFormValues = () => {
+		if (additionalInfoState.associateProducts) {
+			additionalInfoState.associateProducts = additionalInfoState.associateProducts.filter(
+				(item) => item.associateProductId !== undefined && item.quantity !== undefined
+			);
+		}
 		return additionalInfoState;
 	};
 
@@ -34,12 +68,45 @@
 		class="w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3 p-5"
 	>
 		<h2 class="text-lg font-bold decoration-1 col-span-3">Associate Product</h2>
-		<UFormField label="Associate Product" name="associateProduct">
-			<UInput v-model="additionalInfoState.associateProduct" class="w-full" />
-		</UFormField>
-		<UFormField label="Quantity" name="associateProductQty">
-			<UInput v-model="additionalInfoState.associateProductQty" class="w-full" />
-		</UFormField>
+		<UForm
+			v-for="(item, count) in additionalInfoState.associateProducts"
+			:key="count"
+			:name="`associateProduct.${count}`"
+			:schema="associateProductSchema"
+			class="w-full col-span-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-3"
+			nested
+		>
+			<UFormField label="Associate Product" name="associateProduct">
+				<UInputMenu
+					:items="productSelectMenuData"
+					value-key="id"
+					v-model="item.associateProductId"
+					class="w-full"
+				/>
+			</UFormField>
+			<UFormField label="Quantity" name="associateProductQty">
+				<UInput v-model="item.quantity" class="w-full" />
+			</UFormField>
+			<div class="flex gap-2 items-center pt-6">
+				<UButton
+					icon="i-lucide-plus"
+					size="md"
+					color="primary"
+					variant="solid"
+					@click="handleAdd()"
+				/>
+				<UButton
+					v-if="
+						additionalInfoState.associateProducts?.length &&
+						additionalInfoState.associateProducts.length > 1
+					"
+					variant="outline"
+					icon="i-lucide-minus"
+					color="primary"
+					@click="handleRemove(count)"
+				/>
+			</div>
+		</UForm>
 		<div></div>
 
 		<h2 class="text-lg font-bold decoration-1 col-span-3">Notification Method</h2>

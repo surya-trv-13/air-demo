@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import { ref } from "vue";
 	import { CalendarDate, type DateValue } from "@internationalized/date";
+	import type { Order } from "~/types/order";
 
 	const breadcrumbItems = ref([{ label: "Order" }, { label: "Air Order Home", to: "/order" }]);
 	const dateRange = ref<any>({
@@ -16,13 +17,38 @@
 		) as DateValue,
 	});
 	const searchFormRef = ref<{ getFormValues: () => any } | null>(null);
+	const orderData = ref<Order[]>([]);
+	const orderPending = ref(false);
+
+	onMounted(async () => {
+		await handleRefresh();
+	});
 
 	/**
 	 * Handle Refresh
 	 */
-	const handleRefresh = () => {
-		const data = searchFormRef.value?.getFormValues();
-		console.log("Received Data is ", data);
+	const handleRefresh = async () => {
+		const searchData = searchFormRef.value?.getFormValues();
+		console.log("Received Data is ", searchData);
+
+		const {
+			data: orders,
+			pending,
+			error,
+		} = await useFetch<Order[]>("/api/order/all", {
+			method: "get",
+			query: {
+				orderDate: searchData?.startTime,
+				regionIds: 1,
+			},
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+			},
+		});
+		orderData.value = orders?.value || [];
+		orderPending.value = pending.value;
+		console.log("Fetched Orders: ", orders?.value);
 	};
 
 	const pagination = ref({
@@ -45,7 +71,8 @@
 		<div class="mt-3 w-full space-y-4">
 			<order-search-form ref="searchFormRef" />
 		</div>
-		<div class="w-full space-y-4 pb-4">
+		<div v-if="orderPending">Loading...</div>
+		<div v-else class="w-full space-y-4 pb-4">
 			<UTable
 				ref="table"
 				v-model:pagination="pagination"

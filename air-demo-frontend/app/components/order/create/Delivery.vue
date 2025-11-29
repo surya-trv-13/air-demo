@@ -1,52 +1,66 @@
 <script setup lang="ts">
 	import * as z from "zod";
 	const schema = z.object({
-		deliveryDate: z.string(),
-		onSiteTime: z.string(),
-		interval: z.number("Please enter valid interval").min(1, "Interval must be at least 1"),
-		totalQty: z.string("Please enter total quantity"),
+		orderDate: z.string(),
+		startTime: z.string(),
+		intervals: z.number("Please enter valid interval").min(1, "Interval must be at least 1"),
+		orderQuantity: z.string("Please enter total quantity"),
 		specialAccess: z.string().optional(),
+		fleetTruckIds: z.array(z.string()).default([]),
+		fleetGroupTrucks: z.array(z.string()).default([]),
 	});
 
 	type Schema = z.output<typeof schema>;
 
 	const plantSchema = z.object({
-		plant: z.string(),
-		plantQty: z.number(),
+		plantType: z.string(),
+		plantId: z.number(),
+		quantity: z.number(),
 		startTime: z.string(),
-		interval: z.number(),
+		intervals: z.number(),
 	});
 
 	type PlantSchema = z.output<typeof plantSchema>;
 
-	const deliveryState = reactive<Partial<Schema & { plants: Partial<PlantSchema>[] }>>({
-		plants: [
+	const deliveryState = reactive<Partial<Schema & { assignedPlants: Partial<PlantSchema>[] }>>({
+		orderDate: new Date().toISOString().substring(0, 10),
+		fleetGroupTrucks: [],
+		fleetTruckIds: [],
+		assignedPlants: [
 			{
-				plant: undefined,
-				plantQty: 0,
-				interval: 0,
+				plantType: "MAIN_PLANT",
+				plantId: undefined,
+				quantity: 0,
+				intervals: 0,
 				startTime: undefined,
 			},
 			{
-				plant: undefined,
-				plantQty: 0,
-				interval: 0,
+				plantType: "SUPPORT_PLANT",
+				plantId: undefined,
+				quantity: 0,
+				intervals: 0,
 				startTime: undefined,
 			},
 		],
 	});
 
 	const addPlant = () => {
-		if (!deliveryState.plants) {
-			deliveryState.plants = [];
+		if (!deliveryState.assignedPlants) {
+			deliveryState.assignedPlants = [];
 		}
 
-		deliveryState.plants.push({});
+		deliveryState.assignedPlants.push({
+			plantType: "SUPPORT_PLANT",
+			plantId: undefined,
+			quantity: 0,
+			intervals: 0,
+			startTime: undefined,
+		});
 	};
 
 	const removePlant = () => {
-		if (deliveryState.plants) {
-			deliveryState.plants.pop();
+		if (deliveryState.assignedPlants) {
+			deliveryState.assignedPlants.pop();
 		}
 	};
 
@@ -75,6 +89,17 @@
 	};
 
 	const getDeliveryFormValues = () => {
+		if (deliveryState.assignedPlants) {
+			deliveryState.assignedPlants = deliveryState.assignedPlants
+				.filter((d) => d.plantId !== undefined)
+				.map((item) => ({
+					plantType: item.plantType,
+					plantId: item.plantId,
+					quantity: item.quantity,
+					startTime: new Date().toISOString().split("T")[0] + "T" + item.startTime + ":00Z",
+					intervals: item.intervals,
+				}));
+		}
 		return deliveryState;
 	};
 
@@ -93,37 +118,42 @@
 				</div>
 			</div>
 			<UFormField label="Delivery Date" name="deliveryDate">
-				<UInput type="date" v-model="deliveryState.deliveryDate" class="w-full" />
+				<UInput type="date" v-model="deliveryState.orderDate" class="w-full" />
 			</UFormField>
 			<UFormField label="On Site Time" name="onSiteTime">
-				<UInput type="time" v-model="deliveryState.onSiteTime" class="w-full" />
+				<UInput type="time" v-model="deliveryState.startTime" class="w-full" />
 			</UFormField>
 			<UFormField label="Interval" name="interval">
-				<UInput type="number" v-model="deliveryState.interval" class="w-full" />
+				<UInput type="number" v-model="deliveryState.intervals" class="w-full" />
 			</UFormField>
-			<UFormField label="Total Qty" name="totalQty">
-				<UInput v-model="deliveryState.totalQty" class="w-full" />
+			<UFormField label="Order Quantity" name="orderQuantity">
+				<UInput v-model="deliveryState.orderQuantity" class="w-full" />
 			</UFormField>
 
 			<UForm
-				v-for="(item, count) in deliveryState.plants"
+				v-for="(item, count) in deliveryState.assignedPlants"
 				:key="count"
 				:name="`plants.${count}`"
 				:schema="plantSchema"
 				class="w-full col-span-full grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-3"
 				nested
 			>
-				<UFormField :label="!count ? 'Plant (Main)' : 'Plant (Support)'" name="plant">
-					<UInput v-model="item.plant" class="w-full" />
+				<UFormField :label="!count ? 'Plant (Main)' : 'Plant (Support)'" name="plantId">
+					<UInputMenu
+						:items="plantSelectMenu"
+						value-key="id"
+						v-model="item.plantId"
+						class="w-full"
+					/>
 				</UFormField>
 				<UFormField label="Qty" name="quantity">
-					<UInput v-model="item.plantQty" class="w-full" />
+					<UInput v-model="item.quantity" class="w-full" />
 				</UFormField>
 				<UFormField label="Start Time" name="startTime">
 					<UInput type="time" v-model="item.startTime" class="w-full" />
 				</UFormField>
 				<UFormField label="Interval" name="interval">
-					<UInput v-model="item.interval" class="w-full" />
+					<UInput v-model="item.intervals" class="w-full" />
 				</UFormField>
 			</UForm>
 
@@ -132,7 +162,7 @@
 					Add Plant
 				</UButton>
 				<UButton
-					v-if="deliveryState.plants?.length && deliveryState.plants.length > 2"
+					v-if="deliveryState.assignedPlants?.length && deliveryState.assignedPlants.length > 2"
 					color="neutral"
 					variant="ghost"
 					size="sm"

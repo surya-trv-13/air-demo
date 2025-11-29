@@ -1,31 +1,60 @@
 <script setup lang="ts">
 	import * as z from "zod";
 	import type { InputMenuItem } from "~/types/inputMenuItems";
+	import type { CustomerContact } from "~/types/CustomerContact";
 
 	const schema = z.object({
-		priority: z.string(),
+		priority: z.number(),
 		status: z.string(),
-		purchaseOrderNo: z.string(),
-		customer: z.number(),
-		project: z.number(),
-		location: z.string(),
-		emailAddress: z.email(),
-		contactNo: z.string().optional(),
-		contactName: z.string().optional(),
+		purchaseOrder: z.object({
+			purchaseOrderNumber: z.string().optional(),
+		}),
+		customerId: z.number(),
+		projectId: z.number(),
+		locationId: z.number(),
+		address: z.string().default("221 B, California, USA"),
+		contact: z
+			.object({
+				emailAddress: z.email().optional(),
+				contactNumber: z.string().optional(),
+				customerName: z.string().optional(),
+			})
+			.optional(),
 	});
 
 	type Schema = z.output<typeof schema>;
 
-	const orderDetailState = reactive<Partial<Schema>>({
+	const contactsMenu = ref<InputMenuItem[]>([]);
+	const fetchedContacts = ref<CustomerContact[]>([]);
+
+	const orderDetailState = reactive<
+		Partial<Schema> & {
+			contact: {
+				id: number | undefined;
+				emailAddress: string | undefined;
+				contactNumber: string | undefined;
+				customerName: string | undefined;
+			};
+			purchaseOrder: {
+				purchaseOrderNumber: string | undefined;
+			};
+		}
+	>({
+		address: "221 B, California, USA",
 		priority: undefined,
-		status: undefined,
-		purchaseOrderNo: undefined,
-		customer: undefined,
-		project: undefined,
-		location: undefined,
-		emailAddress: undefined,
-		contactNo: undefined,
-		contactName: undefined,
+		status: "ACCEPTED",
+		purchaseOrder: {
+			purchaseOrderNumber: undefined,
+		},
+		customerId: undefined,
+		projectId: undefined,
+		locationId: undefined,
+		contact: {
+			id: undefined,
+			emailAddress: undefined,
+			contactNumber: undefined,
+			customerName: undefined,
+		},
 	});
 
 	const customerSpecificProjects = ref<Partial<InputMenuItem>[]>();
@@ -36,11 +65,30 @@
 		["4", ["6", "8"]],
 	]);
 
-	const handleProjectMenu = (event: Event) => {
-		orderDetailState.project = undefined;
+	const handleCustomerChange = async (event: Event) => {
+		const selectedCustomerId = (event.target as HTMLSelectElement)?.value;
+		const { data: contacts } = await useAsyncData<CustomerContact[]>(
+			`contacts-${selectedCustomerId}`,
+			() =>
+				$fetch(`/api/customer/${selectedCustomerId}/operation-contacts`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+					},
+				})
+		);
+
+		fetchedContacts.value = contacts.value || [];
+
+		contactsMenu.value = (contacts.value || []).map((contact) => ({
+			label: contact.contactName,
+			id: contact.customerContactId,
+		})) as InputMenuItem[];
+
+		orderDetailState.projectId = undefined;
 		customerProjectMap.forEach((projectIds, customerId) => {
-			const data = (event.target as HTMLInputElement)?.value;
-			if (customerId === data) {
+			if (customerId === selectedCustomerId) {
 				const projectMenu = projectSelectMenu.value.filter(
 					(project) => project?.id && projectIds.includes(String(project.id))
 				);
@@ -48,6 +96,19 @@
 				customerSpecificProjects.value = projectMenu;
 			}
 		});
+	};
+
+	const handleContactChange = (event: Event) => {
+		const selectedContactId = Number((event.target as HTMLInputElement)?.value);
+		const selectedContact = fetchedContacts.value.find(
+			(contact) => contact.customerContactId === selectedContactId
+		);
+		if (selectedContact) {
+			orderDetailState.contact.id = selectedContact.customerContactId;
+			orderDetailState.contact.customerName = selectedContact.contactName;
+			orderDetailState.contact.contactNumber = selectedContact.contactNumber;
+			orderDetailState.contact.emailAddress = selectedContact.emailAddress;
+		}
 	};
 
 	function getOrderFormValues() {
@@ -78,37 +139,37 @@
 				v-model="orderDetailState.status"
 			/>
 		</UFormField>
-		<UFormField label="Purchase Order No." name="purchaseOrderNo">
-			<UInput class="w-full" v-model="orderDetailState.purchaseOrderNo" />
+		<UFormField label="Purchase Order No." name="purchaseOrderNumber">
+			<UInput class="w-full" v-model="orderDetailState.purchaseOrder.purchaseOrderNumber" />
 		</UFormField>
-		<UFormField label="Customer" name="customer">
+		<UFormField label="Customer" name="customerId">
 			<UInputMenu
 				:items="customerSelectMenu"
 				class="w-full"
 				value-key="id"
-				v-model="orderDetailState.customer"
-				@change="handleProjectMenu"
+				v-model="orderDetailState.customerId"
+				@change="handleCustomerChange"
 			/>
 		</UFormField>
-		<UFormField label="Project" name="project">
+		<UFormField label="Project" name="projectId">
 			<UInputMenu
 				:items="customerSpecificProjects"
 				value-key="id"
 				class="w-full"
-				v-model="orderDetailState.project"
+				v-model="orderDetailState.projectId"
 			/>
 		</UFormField>
-		<UFormField label="Location" name="location">
+		<UFormField label="Location" name="locationId">
 			<UInputMenu
 				:items="locationSelectMenu"
 				class="w-full"
 				value-key="id"
-				v-model="orderDetailState.location"
+				v-model="orderDetailState.locationId"
 			/>
 		</UFormField>
 		<div class="flex justify-between items-center px-3 py-4 col-span-3 bg-gray-100">
 			<p class="flex items-center gap-2">
-				<UIcon name="i-lucide-map-pin" class="size-5" /> California, USA
+				<UIcon name="i-lucide-map-pin" class="size-5" /> 221 B, California, USA
 			</p>
 			<UModal
 				title="Change Location"
@@ -125,14 +186,22 @@
 				</template>
 			</UModal>
 		</div>
-		<UFormField label="Contact No" name="contactNo">
-			<UInput class="w-full" v-model="orderDetailState.contactNo" />
+		<UFormField label="Contact Name" name="customerName">
+			<UInputMenu
+				:items="contactsMenu"
+				value-key="id"
+				class="w-full"
+				trailing-icon=""
+				v-model="orderDetailState.contact.customerName"
+				@change="handleContactChange"
+			/>
 		</UFormField>
-		<UFormField label="Contact Name" name="contactName">
-			<UInput class="w-full" v-model="orderDetailState.contactName" />
+		<UFormField label="Contact No" name="contactNumber">
+			<UInput class="w-full" v-model="orderDetailState.contact.contactNumber" />
 		</UFormField>
+
 		<UFormField label="Email Address" name="emailAddress">
-			<UInput class="w-full" type="email" v-model="orderDetailState.emailAddress" />
+			<UInput class="w-full" type="email" v-model="orderDetailState.contact.emailAddress" />
 		</UFormField>
 	</UForm>
 </template>

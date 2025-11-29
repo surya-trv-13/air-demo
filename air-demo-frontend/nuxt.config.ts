@@ -9,4 +9,24 @@ export default defineNuxtConfig({
 		classSuffix: "",
 	},
 	devtools: { enabled: true },
+	runtimeConfig: {
+		public: {
+			apiBaseUrl: "http://localhost:3000",
+			siteUrl: "",
+			siteName: "AiR Digital Demo",
+			siteDescription: "Nuxt and Tailwind CSS dashboard template specially designed for AiR",
+			language: "en",
+			googleMapKey: "AIzaSyDOI1qmOWrIyuDMzm5sa7UqTmhGnoUkJxc",
+			socketBaseUrl: "http://localhost:3000",
+		},
+	},
+	nitro: {
+		devProxy: {
+			"/api": {
+				target: "http://localhost:8080/api",
+				changeOrigin: true,
+				prependPath: true,
+			},
+		},
+	},
 });

@@ -4,7 +4,7 @@
 		location: undefined,
 		plant: undefined,
 		productCode: undefined,
-		startTime: undefined,
+		startTime: new Date().toISOString().substring(0, 10),
 		type: undefined,
 		status: [],
 	});

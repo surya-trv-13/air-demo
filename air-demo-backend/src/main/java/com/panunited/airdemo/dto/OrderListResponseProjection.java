@@ -1,0 +1,57 @@
+package com.panunited.airdemo.dto;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+public interface OrderListResponseProjection {
+    Long getId();
+    String getOrderNo();
+    String getCtOrderCode();
+    String getStatus();
+    LocalDate getOrderDate();
+    Long getCustomerId();
+    String getCustomerName();
+    Long getProjectId();
+    String getProjectName();
+    String getAddress();
+    Long getProductId();
+    String getProductCode();
+    String getProductDescription();
+    Double getOrderQuantity();
+    Double getProgressiveQuantity();
+    Double getActualProgressiveQuantity();
+    Double getQuantityPerLoad();
+    LocalTime getStartTime();
+    LocalDateTime getBatchTime();
+    LocalDateTime getCreatedDate();
+    Long getCreatedBy();
+    Double getAvailableAssignedDOQuantity();
+    Boolean getIsEditable();
+    Boolean getIsAssignable();
+    Integer getMergeWithSingleDeliveryOrder();
+    Integer getMergeWithMultipleDeliveryOrder();
+    Boolean getMergingOrder();
+    Long getOrderId();
+    Long getMergeOrderId();
+    Boolean getMultipleDeliveryOrder();
+    Boolean getContinuousAssignDeliveryOrder();
+    Boolean getTechnicianOnSite();
+    Long getLayerGroup();
+    String getAssociateProductAgg();
+    Long getMainPlantId();
+    String getMainPlantName();
+    Long getRegionId();
+    String getRegionName();
+    Boolean getCalledDeliveryOrder();
+    Boolean getHasInvoicedDo();
+    Boolean getHasInvoiceDraftGeneratedDo();
+    String getTestType();
+    Boolean getHaveCert();
+    String getMissingInfoResult();
+    String getDoNumber();
+    Integer getIntervals();
+    String getCustomerCode();
+    Double getLatitude();
+    Double getLongitude();
+}

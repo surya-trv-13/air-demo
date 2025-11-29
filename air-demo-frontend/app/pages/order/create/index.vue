@@ -63,7 +63,7 @@
 	/**
 	 * handle Submit logic
 	 */
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		// Handle Additional Information
 		orderFormData.value = {
 			...orderFormData.value,
@@ -71,6 +71,21 @@
 		};
 
 		// submit logic
+		const response: { accessToken: string; refreshToken: string } = await $fetch("/api/order", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+			},
+			body: {
+				...orderFormData.value,
+			},
+		});
+
+		if (response) {
+			// Redirect to order list page after successful submission
+			await useRouter().push("/order");
+		}
 	};
 </script>
 
