@@ -1,9 +1,21 @@
 <script setup lang="ts">
-	import { ref, onMounted, onUnmounted } from "vue";
+	import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 	import moment from "moment";
-	import type { DateType, Timeline, TimelineAlignType } from "vis-timeline";
-	const timeline = ref(null);
+	import { Timeline, type DateType, type TimelineAlignType } from "vis-timeline";
+	import { DataSet } from "vis-data";
+	import { DoPlan, Grouping, OrderItem, type OrderPlan } from "~/types/timeline";
+	const timeline = ref<Timeline>();
 	let timelineInstance: Timeline | null = null;
+	const scheduleData = ref([]);
+	const groups = ref<DataSet<Grouping>>(new DataSet());
+	const items = ref<DataSet<OrderItem>>(new DataSet({}));
+	const timer = ref();
+
+	const option = reactive({
+		customerId: null,
+		projectId: null,
+		regionId: null,
+	});
 
 	onMounted(async () => {
 		const visTimeline = await import("vis-timeline");
@@ -55,9 +67,11 @@
 			start: moment.Moment;
 			end: moment.Moment;
 		}
+	});
 
-		const options = {
-			groupOrder: (a: TimelineGroup, b: TimelineGroup) => {
+	const vis = {
+		options: {
+			groupOrder: (a: any, b: any) => {
 				return moment(a.earliestDeliveryOrderPlanStartTime).diff(
 					moment(b.earliestDeliveryOrderPlanStartTime)
 				);
@@ -99,39 +113,92 @@
 			},
 			start: moment(new Date()).add(-10, "m"),
 			end: moment(new Date()).add(150, "m"),
-		};
+		},
+	};
 
-		if (timeline.value) {
-			timelineInstance = new Timeline(timeline.value, items, options);
+	const loadData = async () => {
+		initTimeline();
+		timer.value = setInterval(refreshTimeline, 60000);
+	};
 
-			// Event listeners
-			timelineInstance.on("itemover", (properties) => {
-				console.log("Item hovered:", properties.item);
-			});
+	const refreshTimeline = async () => {
+		initTimeline();
+		vis.options.start = moment(new Date()).add(-10, "m");
+		vis.options.end = moment(new Date()).add(150, "m");
+	};
 
-			timelineInstance.on("select", (properties) => {
-				console.log("Item selected:", properties.items);
-			});
+	const initTimeline = async () => {
+		await getTimelineData();
+		processData();
+	};
 
-			timelineInstance.on("timechanged", (properties) => {
-				console.log("Item moved to:", properties.time);
-			});
+	const processData = async () => {
+		const container = document.getElementById("visualization");
+		if (!container) return;
+		groups.value.clear();
+		items.value.clear();
+		timeline.value?.destroy();
+		scheduleData.value?.forEach(function (order: OrderPlan) {
+			if (order.doPlans.length > 0) {
+				let groupDisplay = "";
+				let location = order.locationName == null ? "" : order.locationName + "<br>";
+
+				const orderGroup = order.orderId + "_" + order.orderNo + "_" + order.regionCode;
+				groupDisplay +=
+					"<b>" +
+					orderGroup +
+					"</b>" +
+					"<br>" +
+					order.customerName +
+					"<br>" +
+					location +
+					order.projectName +
+					"<br>" +
+					order.productCode +
+					"/ " +
+					order.productDescription +
+					"<ul>";
+				groups.value.add(
+					new Grouping(orderGroup, groupDisplay, order.earliestDeliveryOrderPlanStartTime)
+				);
+
+				order.doPlans.forEach(function (plan: DoPlan) {
+					items.value.add(new OrderItem(plan, order));
+				});
+			}
+		});
+
+		timeline.value = new Timeline(container, items.value, groups.value, vis.options);
+		timeline.value.setGroups(groups.value);
+		timeline.value.setCurrentTime(new Date());
+	};
+	const getTimelineData = async () => {
+		const { data: orderPlanResponse }: { data: any } = await $fetch("/api/order-plan/plans", {
+			method: "GET",
+			params: option,
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+			},
+		});
+
+		scheduleData.value = orderPlanResponse?.value;
+	};
+	onBeforeUnmount(() => {
+		if (timer.value) {
+			clearInterval(timer.value);
 		}
 	});
 
-	onUnmounted(() => {
-		if (timelineInstance) {
-			timelineInstance.destroy();
-		}
-	});
+	loadData();
 </script>
 <template>
 	<div>
-		<div ref="timeline" class="timeline-container"></div>
+		<div ref="visualization" id="visualization" oncontextmenu="return false;"></div>
 	</div>
 </template>
 <style scoped>
-	.timeline-container {
+	#visualization {
 		width: 100%;
 		height: 400px;
 		border: 1px solid #e0e0e0;
