@@ -1,7 +1,6 @@
 package com.panunited.airdemo.service;
 
 import com.panunited.airdemo.dto.*;
-import com.panunited.airdemo.enums.AppsType;
 import com.panunited.airdemo.enums.AuditOrderAssociateProductStatus;
 import com.panunited.airdemo.exception.InvalidRequestException;
 import com.panunited.airdemo.exception.ResourceNotFoundException;
@@ -13,7 +12,6 @@ import com.panunited.airdemo.utils.DateTimeUtil;
 import com.panunited.airdemo.validation.OrderValidation;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -74,9 +72,9 @@ public class OrderService {
         }
 
         // Filter only User ID and Admin Orders
-        List<OrderListResponse> resultantOrder = orders.stream ().filter (order -> order.getCreatedBy () == 10 || order.getCreatedBy ().equals (userId)).toList ();
+//        List<OrderListResponse> resultantOrder = orders.stream ().filter (order -> order.getCreatedBy () == 10 || order.getCreatedBy ().equals (userId)).toList ();
 
-        List<OrderDetailListResponse> orderDetails = orderDetailListMapper.fromOrderListResponse(resultantOrder);
+        List<OrderDetailListResponse> orderDetails = orderDetailListMapper.fromOrderListResponse(orders);
         for (OrderDetailListResponse order : orderDetails) {
             if (Boolean.TRUE.equals(order.getMergingOrder())) {
                 continue;
