@@ -3,7 +3,7 @@
 	import { CalendarDate, type DateValue } from "@internationalized/date";
 	import type { Order } from "~/types/order";
 
-	const breadcrumbItems = ref([{ label: "Order" }, { label: "Air Order Home", to: "/order" }]);
+	const breadcrumbItems = ref([{ label: "Home", to: "/order" }]);
 	const dateRange = ref<any>({
 		start: new CalendarDate(
 			new Date().getFullYear(),
@@ -38,7 +38,12 @@
 		} = await useFetch<Order[]>("/api/order/all", {
 			method: "get",
 			query: {
-				orderDate: searchData?.startTime,
+				orderDateStart: dateRange?.value.start
+					? new Date(dateRange.value.start.toString()).toISOString().split("T")[0]
+					: new Date().toISOString().split("T")[0],
+				orderDateEnd: dateRange?.value.end
+					? new Date(dateRange.value.end.toString()).toISOString().split("T")[0]
+					: new Date().toISOString().split("T")[0],
 				regionIds: 1,
 			},
 			headers: {
@@ -47,8 +52,34 @@
 			},
 		});
 		orderData.value = orders?.value || [];
+
+		if (orderData.value.length > 0) {
+			if (searchData.customer) {
+				orderData.value = orderData.value.filter(
+					(order) => order.customerId === Number(searchData.customer)
+				);
+			}
+
+			if (searchData.plant) {
+				orderData.value = orderData.value.filter(
+					(order) => order.mainPlantId === Number(searchData.plant)
+				);
+			}
+
+			if (searchData.productCode) {
+				orderData.value = orderData.value.filter(
+					(order) => order.productId === searchData.productCode
+				);
+			}
+
+			if (searchData.status && searchData.status.length > 0) {
+				orderData.value = orderData.value.filter((order) =>
+					searchData.status.includes(order.status)
+				);
+			}
+		}
+
 		orderPending.value = pending.value;
-		console.log("Fetched Orders: ", orders?.value);
 	};
 
 	const pagination = ref({

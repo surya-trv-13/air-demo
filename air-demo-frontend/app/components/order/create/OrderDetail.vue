@@ -67,21 +67,10 @@
 
 	const handleCustomerChange = async (event: Event) => {
 		const selectedCustomerId = (event.target as HTMLSelectElement)?.value;
-		const { data: contacts } = await useAsyncData<CustomerContact[]>(
-			`contacts-${selectedCustomerId}`,
-			() =>
-				$fetch(`/api/customer/${selectedCustomerId}/operation-contacts`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-					},
-				})
-		);
+		const contacts: CustomerContact[] = customerContactMenu?.[selectedCustomerId] || [];
+		fetchedContacts.value = contacts || [];
 
-		fetchedContacts.value = contacts.value || [];
-
-		contactsMenu.value = (contacts.value || []).map((contact) => ({
+		contactsMenu.value = (contacts || []).map((contact) => ({
 			label: contact.contactName,
 			id: contact.customerContactId,
 		})) as InputMenuItem[];
@@ -123,25 +112,6 @@
 		:state="orderDetailState"
 		class="w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-3 p-5"
 	>
-		<UFormField label="Priority" name="priority">
-			<UInputMenu
-				class="w-full"
-				value-key="id"
-				:items="prioritySelectMenu"
-				v-model="orderDetailState.priority"
-			/>
-		</UFormField>
-		<UFormField label="Status" name="status">
-			<UInputMenu
-				class="w-full"
-				value-key="value"
-				:items="statusSelectOptions"
-				v-model="orderDetailState.status"
-			/>
-		</UFormField>
-		<UFormField label="Purchase Order No." name="purchaseOrderNumber">
-			<UInput class="w-full" v-model="orderDetailState.purchaseOrder.purchaseOrderNumber" />
-		</UFormField>
 		<UFormField label="Customer" name="customerId">
 			<UInputMenu
 				:items="customerSelectMenu"
@@ -202,6 +172,9 @@
 
 		<UFormField label="Email Address" name="emailAddress">
 			<UInput class="w-full" type="email" v-model="orderDetailState.contact.emailAddress" />
+		</UFormField>
+		<UFormField label="Purchase Order No." name="purchaseOrderNumber">
+			<UInput class="w-full" v-model="orderDetailState.purchaseOrder.purchaseOrderNumber" />
 		</UFormField>
 	</UForm>
 </template>

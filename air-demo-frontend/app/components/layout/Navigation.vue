@@ -3,7 +3,7 @@
 	const items = ref<NavigationMenuItem[][]>([
 		[
 			{
-				label: "Air Order Home",
+				label: "Home",
 				to: "/order",
 			},
 			{
@@ -19,9 +19,8 @@
 </script>
 <template>
 	<div class="bg-white fixed h-screen top-0 left-0">
-		<div class="flex flex-col items-center gap-0.5 my-2">
+		<div class="flex flex-col items-center gap-0.5 my-5">
 			<img src="~assets/img/air-digital-logo.png" alt="Air Digital Logo" class="w-25" />
-			<p class="font-bold">Air Experience</p>
 		</div>
 		<UNavigationMenu
 			orientation="vertical"

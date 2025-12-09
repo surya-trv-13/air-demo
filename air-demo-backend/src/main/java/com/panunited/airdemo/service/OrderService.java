@@ -57,8 +57,8 @@ public class OrderService {
     private static final Integer SEQUENCE_OF_FIRST_LAYER_ORDER = 1;
 
 
-    public List<OrderDetailListResponse> getAllOrders(LocalDate orderDate, Long regionId, Long userId) {
-        List<OrderListResponseProjection> orderProjection = orderRepository.findOrderListByOrderDateAndRegionId(orderDate, regionId);
+    public List<OrderDetailListResponse> getAllOrders(LocalDate orderDateStart, LocalDate orderDateEnd, Long regionId, Long userId) {
+        List<OrderListResponseProjection> orderProjection = orderRepository.findOrderListByOrderDateAndRegionId(orderDateStart, orderDateEnd, regionId);
 
         // Convert Projection to ListResponse
         List<OrderListResponse> orders = orderProjection.stream()

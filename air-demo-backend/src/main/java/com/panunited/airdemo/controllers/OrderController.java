@@ -26,12 +26,12 @@ public class OrderController extends BaseController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<OrderDetailListResponse>> getAllOrders (@AuthenticationPrincipal UserPrincipal principal, @RequestParam("orderDate") LocalDate orderDate, @RequestParam("regionIds") List<Long> regionIds) throws Exception {
+    public ResponseEntity<List<OrderDetailListResponse>> getAllOrders (@AuthenticationPrincipal UserPrincipal principal, @RequestParam("orderDateStart") LocalDate orderDateStart,@RequestParam("orderDateEnd") LocalDate orderDateEnd, @RequestParam("regionIds") List<Long> regionIds) throws Exception {
         List<OrderDetailListResponse> orderDetailedList = new ArrayList<>();
         Long userId = getLoginUserId(principal);
 
         for(Long regionId: regionIds) {
-            orderDetailedList.addAll(orderService.getAllOrders(orderDate, regionId, userId));
+            orderDetailedList.addAll(orderService.getAllOrders(orderDateStart,orderDateEnd, regionId, userId));
         }
 
         return ResponseEntity.ok(orderDetailedList);

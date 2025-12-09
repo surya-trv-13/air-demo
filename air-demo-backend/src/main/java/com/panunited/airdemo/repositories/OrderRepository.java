@@ -32,7 +32,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                ORDER_PLANT OP
                              INNER JOIN ORDERS O ON OP.order_id = O.id
                              WHERE
-                               OP.PLANT_TYPE like '%MAIN_PLANT%' AND O.ORDER_DATE = :orderDate
+                               OP.PLANT_TYPE like '%MAIN_PLANT%' AND O.ORDER_DATE >= :orderDateStart AND O.ORDER_DATE <= :orderDateEnd
                            ) CC
                          WHERE
                            ROW_ORDER = 1
@@ -55,7 +55,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                            ORDERS
                          WHERE
                            MERGE_ORDER_ID IS NOT NULL
-                           AND ORDER_DATE = :orderDate
+                           AND ORDER_DATE >= :orderDateStart AND ORDER_DATE <= :orderDateEnd
                        ),
                        TOTAL_ORDER_VIEW AS (
                          SELECT
@@ -138,7 +138,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                            LEFT JOIN ORDER_PLANT_SELECT OPS ON MOD.ORDER_ID = OPS.ORDER_ID
                          WHERE
                            MOD.ROW_ORDER_OF_MERGE_ORDER = 1
-                           AND MO.ORDER_DATE = :orderDate
+                           AND MO.ORDER_DATE >= :orderDateStart AND MO.ORDER_DATE <= :orderDateEnd
                          UNION
                          SELECT
                            O.ID,
@@ -196,7 +196,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                            LEFT JOIN ORDER_PLANT_SELECT OPS ON O.ID = OPS.ORDER_ID
                          WHERE
                            O.MERGE_ORDER_ID IS NULL
-                           AND O.ORDER_DATE = :orderDate
+                           AND O.ORDER_DATE >= :orderDateStart AND O.ORDER_DATE <= :orderDateEnd
                        )
                        SELECT
                          TOV.*,
@@ -271,7 +271,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                        ORDER BY
                          TOV.START_TIME ASC
             """, nativeQuery = true)
-    List<OrderListResponseProjection> findOrderListByOrderDateAndRegionId(LocalDate orderDate, Long regionId);
+    List<OrderListResponseProjection> findOrderListByOrderDateAndRegionId(LocalDate orderDateStart, LocalDate orderDateEnd,  Long regionId);
 
     @Query(value = """
 			SELECT OT.ORDER_ID, T.ID AS TRUCK_ID, T.TRUCK_NO, T.TRUCK_NAME

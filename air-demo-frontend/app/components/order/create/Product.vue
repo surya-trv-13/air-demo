@@ -77,7 +77,7 @@
 			<UCheckbox
 				v-model="productState.cubeMakingAtPlant"
 				name="cubeMakingAtPlant"
-				label="Cube Making at Plant"
+				label="Cube/Cylinder Making at Plant"
 			/>
 		</div>
 	</UForm>

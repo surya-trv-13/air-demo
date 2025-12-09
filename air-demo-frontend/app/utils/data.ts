@@ -2,6 +2,7 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Order } from "~/types/order";
 import type { InputMenuItem } from "~/types/inputMenuItems";
 import { UCheckbox, UBadge } from "#components";
+import type { CustomerContact } from "~/types/CustomerContact";
 
 export const orderColumn: TableColumn<Order>[] = [
 	{
@@ -423,3 +424,78 @@ export const plantSelectMenu = ref<Partial<InputMenuItem>[]>([
 		id: 5,
 	},
 ]);
+
+export const customerContactMenu: { [key: string]: CustomerContact[] } = {
+	"1": [
+		{
+			customerContactId: 1,
+			serialNumber: null,
+			contactName: "Customer contact 1",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+		{
+			customerContactId: 3,
+			serialNumber: null,
+			contactName: "Customer contact 3",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+	],
+	"2": [
+		{
+			customerContactId: 2,
+			serialNumber: null,
+			contactName: "Customer contact 2",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+		{
+			customerContactId: 5,
+			serialNumber: null,
+			contactName: "Customer contact 5",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+	],
+	"3": [
+		{
+			customerContactId: 4,
+			serialNumber: null,
+			contactName: "Customer contact 4",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+		{
+			customerContactId: 6,
+			serialNumber: null,
+			contactName: "Customer contact 6",
+			contactNumber: "10000",
+			emailAddress: "10000",
+			type: "Operation",
+		},
+	],
+	"4": [
+		{
+			customerContactId: 7,
+			serialNumber: null,
+			contactName: "Customer contact 7",
+			contactNumber: "994499944",
+			emailAddress: "customer7@email.com",
+			type: "Operation",
+		},
+		{
+			customerContactId: 8,
+			serialNumber: null,
+			contactName: "Customer contact 8",
+			contactNumber: "77858585",
+			emailAddress: "customer8@email.com",
+			type: "Operation",
+		},
+	],
+};

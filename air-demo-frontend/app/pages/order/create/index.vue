@@ -1,7 +1,6 @@
 <script setup lang="ts">
 	const breadcrumbItems = ref([
-		{ label: "Order" },
-		{ label: "Air Order Home", to: "/order" },
+		{ label: "Home", to: "/order" },
 		{ label: "Create", to: "/order/create" },
 	]);
 
@@ -94,49 +93,52 @@
 		<div class="flex justify-between">
 			<LayoutBreadCrumbs :items="breadcrumbItems" />
 		</div>
-		<UTabs
+		<!-- <UTabs
 			v-model="activeTab"
 			:items="formTabs"
 			variant="pill"
 			:ui="{ trigger: 'grow' }"
 			class="w-full mt-5 gap-0"
-		>
-			<template #order-detail="{ item }">
-				<div class="tab-content">
-					<order-create-order-detail ref="orderDetailFormRef" />
-				</div>
-				<div class="flex justify-end gap-2">
+		> -->
+		<!-- <template #order-detail="{ item }"> -->
+		<div class="tab-content">
+			<order-create-order-detail ref="orderDetailFormRef" />
+		</div>
+		<USeparator />
+		<!-- <div class="flex justify-end gap-2">
 					<UButton @click="handleOrderDetailNext">Next</UButton>
-				</div>
-			</template>
-			<template #delivery="{ item }">
-				<div class="tab-content">
-					<order-create-delivery ref="deliveryFormRef" />
-				</div>
-				<div class="flex justify-end gap-2">
+				</div> -->
+		<!-- </template>
+			<template #delivery="{ item }"> -->
+		<div class="tab-content">
+			<order-create-delivery ref="deliveryFormRef" />
+		</div>
+		<USeparator />
+		<!-- <div class="flex justify-end gap-2">
 					<UButton variant="outline" @click="activeTab = ORDER_CREATE.ORDER_DETAIL">Back</UButton>
 					<UButton @click="handleDeliveryNext">Next</UButton>
-				</div>
-			</template>
-			<template #product="{ item }">
-				<div class="tab-content">
-					<order-create-product ref="productFormRef" />
-				</div>
-				<div class="flex justify-end gap-2">
+				</div> -->
+		<!-- </template>
+			<template #product="{ item }"> -->
+		<div class="tab-content">
+			<order-create-product ref="productFormRef" />
+		</div>
+		<USeparator />
+		<!-- <div class="flex justify-end gap-2">
 					<UButton variant="outline" @click="activeTab = ORDER_CREATE.DELIVERY">Back</UButton>
 					<UButton @click="handleProductNext">Next</UButton>
-				</div>
-			</template>
-			<template #additional-information="{ item }">
-				<div class="tab-content">
-					<order-create-additional-info ref="addInfoFormRef" />
-				</div>
-				<div class="flex justify-end gap-2">
-					<UButton variant="outline" @click="activeTab = ORDER_CREATE.PRODUCT">Back</UButton>
-					<UButton @click="handleSubmit">Submit</UButton>
-				</div>
-			</template>
-		</UTabs>
+				</div> -->
+		<!-- </template>
+			<template #additional-information="{ item }"> -->
+		<div class="tab-content">
+			<order-create-additional-info ref="addInfoFormRef" />
+		</div>
+		<div class="flex justify-end gap-2">
+			<UButton variant="outline" @click="activeTab = ORDER_CREATE.PRODUCT">Back</UButton>
+			<UButton @click="handleSubmit">Submit</UButton>
+		</div>
+		<!-- </template> -->
+		<!-- </UTabs> -->
 	</div>
 </template>
 
@@ -145,7 +147,6 @@
 		background: #ffffff;
 		padding: 0.5rem;
 		margin-bottom: 1rem;
-		height: 70vh;
 		overflow-y: auto;
 	}
 </style>
