@@ -35,28 +35,8 @@
 
 	const activeTab = ref("order-detail");
 
-	const handleOrderDetailNext = () => {
-		orderFormData.value = {
-			...orderFormData.value,
-			...orderDetailFormRef.value?.getOrderFormValues(),
-		};
-		activeTab.value = ORDER_CREATE.DELIVERY;
-	};
-
-	const handleDeliveryNext = () => {
-		orderFormData.value = {
-			...orderFormData.value,
-			...deliveryFormRef.value?.getDeliveryFormValues(),
-		};
-		activeTab.value = ORDER_CREATE.PRODUCT;
-	};
-
-	const handleProductNext = () => {
-		orderFormData.value = {
-			...orderFormData.value,
-			...productFormRef.value?.getProductFormValues(),
-		};
-		activeTab.value = ORDER_CREATE.ADDITIONAL_INFO;
+	const handleCancel = () => {
+		useRouter().push("/order");
 	};
 
 	/**
@@ -65,7 +45,9 @@
 	const handleSubmit = async () => {
 		// Handle Additional Information
 		orderFormData.value = {
-			...orderFormData.value,
+			...orderDetailFormRef.value?.getOrderFormValues(),
+			...deliveryFormRef.value?.getDeliveryFormValues(),
+			...productFormRef.value?.getProductFormValues(),
 			...addInfoFormRef.value?.getAddInfoFormValues(),
 		};
 
@@ -134,7 +116,7 @@
 			<order-create-additional-info ref="addInfoFormRef" />
 		</div>
 		<div class="flex justify-end gap-2">
-			<UButton variant="outline" @click="activeTab = ORDER_CREATE.PRODUCT">Back</UButton>
+			<UButton variant="outline" @click="handleCancel">Cancel</UButton>
 			<UButton @click="handleSubmit">Submit</UButton>
 		</div>
 		<!-- </template> -->

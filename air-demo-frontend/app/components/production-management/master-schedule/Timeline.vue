@@ -6,7 +6,7 @@
 	import { DoPlan, Grouping, OrderItem, type OrderPlan } from "~/types/timeline";
 	const timeline = ref<Timeline>();
 	let timelineInstance: Timeline | null = null;
-	const scheduleData = ref([]);
+	const scheduleData = ref<OrderPlan[]>([]);
 	const groups = ref<DataSet<Grouping>>(new DataSet());
 	const items = ref<DataSet<OrderItem>>(new DataSet({}));
 	const timer = ref();
@@ -28,15 +28,6 @@
 
 		const items = new DataSet<{ id: number; content: string; start: Date; end: Date }>([]);
 
-		for (var i = 0; i >= 0; i--) {
-			var start = new Date(new Date().getTime() + i * 300000);
-			items.add({
-				id: i,
-				content: "Surya " + i,
-				start: start,
-				end: new Date(start.getTime() + 100000),
-			});
-		}
 		interface TimelineItem {
 			id: number;
 			content: string;
@@ -172,7 +163,7 @@
 		timeline.value.setCurrentTime(new Date());
 	};
 	const getTimelineData = async () => {
-		const { data: orderPlanResponse }: { data: any } = await $fetch("/api/order-plan/plans", {
+		const response: OrderPlan[] = await $fetch("/api/order-plan/plans", {
 			method: "GET",
 			params: option,
 			headers: {
@@ -181,67 +172,8 @@
 			},
 		});
 
-		scheduleData.value = orderPlanResponse?.value;
-		scheduleData.value = [
-			{
-				orderNo: "10001",
-				orderId: 54064,
-				deliveryOrderNo: null,
-				customerName: "A Test Customer",
-				locationName: "Work",
-				projectName: "Test Project",
-				plantName: "Hastings",
-				details: null,
-				plantCode: "10",
-				plantId: 1,
-				orderQuantity: 6.0,
-				quantity: null,
-				regionId: 1,
-				regionCode: "HB",
-				message: null,
-				doPlans: [
-					{
-						deliveryOrderNo: 1,
-						loadNumber: null,
-						progressiveQuantity: 5.0,
-						deliveryQuantity: 5.0,
-						startTime: "2025-12-09T06:14:00.575+00:00",
-						orgPlantShortName: "Hastings",
-						newPlantShortName: "Hastings",
-						plantCode: "10",
-						plantId: 1,
-						message: null,
-						batchingPlantId: 1,
-						delay: 183,
-						isManualChanged: false,
-						isAssigned: false,
-						regionId: 1,
-					},
-					{
-						deliveryOrderNo: 2,
-						loadNumber: null,
-						progressiveQuantity: 6.0,
-						deliveryQuantity: 1.0,
-						startTime: "2025-12-09T06:26:00.575+00:00",
-						orgPlantShortName: "Hastings",
-						newPlantShortName: "Hastings",
-						plantCode: "10",
-						plantId: 1,
-						message: null,
-						batchingPlantId: 1,
-						delay: 0,
-						isManualChanged: false,
-						isAssigned: false,
-						regionId: 1,
-					},
-				],
-				productCode: "3010",
-				productDescription: "30 MPa 10mm",
-				intervals: 12,
-				earliestDeliveryOrderPlanStartTime: "2025-12-09T06:14:00.575+00:00",
-				orderIdNoRegion: "54064_10001_1",
-			},
-		];
+		console.log("Order Plan Response: ", response);
+		scheduleData.value = response;
 	};
 	onBeforeUnmount(() => {
 		if (timer.value) {

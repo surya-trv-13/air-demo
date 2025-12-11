@@ -138,6 +138,7 @@ public class OrderService {
 
         editedOrder.setLatitude(location.getLatitude());
         editedOrder.setLongitude(location.getLongitude());
+        editedOrder.setLocation(location);
 
         Structure structure = entityManager.getReference(Structure.class, orderBooking.getStructureId());
         editedOrder.setStructure(structure);

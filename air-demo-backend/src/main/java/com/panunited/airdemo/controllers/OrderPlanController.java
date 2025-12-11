@@ -21,7 +21,7 @@ public class OrderPlanController  extends  BaseController{
 
     @GetMapping("plans")
     public ResponseEntity<List<OrderPlanResponse>> getOrderPlans(OrderPlanSearchParams params) {
-        List<OrderPlanResponse> orderPlanList = orderPlanService.getOrderPlans(params);
+        List<OrderPlanResponse> orderPlanList = orderPlanService.getOrderPlanResponse(params);
         return ResponseEntity.ok(orderPlanList);
     }
 }

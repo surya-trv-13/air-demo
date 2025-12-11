@@ -44,6 +44,7 @@ public class OrderPlanResponse {
     private String productDescription;
     private Integer intervals;
     private Date earliestDeliveryOrderPlanStartTime;
+    private Date startTime;
 
     public OrderPlanResponse populateDoGroup(Map<Long, Plant> plantMap, Map<String, String> optForOrderNos) {
         ObjectMapper mapper = new ObjectMapper();

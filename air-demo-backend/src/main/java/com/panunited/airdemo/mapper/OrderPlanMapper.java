@@ -1,6 +1,7 @@
 package com.panunited.airdemo.mapper;
 
 import com.panunited.airdemo.dto.OrderPlanAssigned;
+import com.panunited.airdemo.dto.OrderPlanAssignedProjection;
 import com.panunited.airdemo.dto.OrderPlanResponse;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -15,4 +16,7 @@ public interface OrderPlanMapper {
 
     @Mapping(target = "doPlans", ignore = true)
     public abstract OrderPlanResponse toOrderPlanResponse(OrderPlanAssigned dto);
+
+    @Mapping(target = "doPlans", ignore = true)
+    public abstract OrderPlanResponse toOrderPlanResponseFromProjection(OrderPlanAssignedProjection dto);
 }

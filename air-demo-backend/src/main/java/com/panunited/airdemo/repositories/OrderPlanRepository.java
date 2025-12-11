@@ -1,6 +1,7 @@
 package com.panunited.airdemo.repositories;
 
 import com.panunited.airdemo.dto.OrderPlanAssigned;
+import com.panunited.airdemo.dto.OrderPlanAssignedProjection;
 import com.panunited.airdemo.models.OrderPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,6 +42,23 @@ public interface OrderPlanRepository extends JpaRepository<OrderPlan, Long> {
                 ORDER BY start_time
             """, nativeQuery = true)
     List<OrderPlanAssigned> getOrderPlanAssigns(Long customerId, Long projectId, Long regionId);
+
+
+
+    @Query(value = """
+            SELECT o.id order_id, o.order_no, c.customer_name, l.name location_name, p.project_name, pl.plant_name, pl.plant_code, pl.id plant_id, 
+                o.order_quantity, r.region_code, r.region_id, pr.product_code, pr.product_description, o.intervals, o.order_date_time_utc start_time
+            FROM orders o
+            LEFT JOIN customer c ON o.customer_id = c.id
+            LEFT JOIN location l ON o.location_id = l.id
+            LEFT JOIN project p ON o.project_id = p.id
+            INNER JOIN order_plant op ON o.id = op.order_id
+            LEFT JOIN plant pl ON op.plant_id = pl.id
+            LEFT JOIN region r ON r.region_id = pl.region_id
+            LEFT JOIN product pr ON pr.id = o.product_id
+            WHERE o.id IN (26, 27, 30, 31, 32, 33)
+            """, nativeQuery = true)
+    List<OrderPlanAssignedProjection> getOrderPlansAssign();
 
     @Query(value = """
                 SELECT OH.id order_id
