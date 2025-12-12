@@ -10,4 +10,5 @@ public class OrderPlanSearchParams {
     private Long locationId;
     private Long projectId;
     private Long regionId;
+    private String timezone;
 }

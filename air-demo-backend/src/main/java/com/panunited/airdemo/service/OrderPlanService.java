@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,12 +88,12 @@ public class OrderPlanService {
 
         try {
              // Step 1 : Fetch the Data for all the Orders
-             List<OrderPlanResponse> orderResponseList =  orderPlanRepository.getOrderPlansAssign()
+             List<OrderPlanResponse> orderResponseList =  orderPlanRepository.getOrderPlansAssign(params.getCustomerId(), params.getLocationId(), params.getProjectId())
                      .stream().map(mapper::toOrderPlanResponseFromProjection).toList();
 
              // Step 2: Prepare the DO Plan for the Order created
             for(OrderPlanResponse orderPlanResponse: orderResponseList) {
-                orderPlanResponse.setDoPlans(getDOPlanList(orderPlanResponse));
+                orderPlanResponse.setDoPlans(getDOPlanList(orderPlanResponse, params.getTimezone()));
             }
 
             return  orderResponseList;
@@ -106,7 +105,7 @@ public class OrderPlanService {
         return  new ArrayList<>();
     }
 
-    private List<DoPlan> getDOPlanList (OrderPlanResponse orderPlanResponse) {
+    private List<DoPlan> getDOPlanList (OrderPlanResponse orderPlanResponse, String timezone) {
         List<DoPlan> doPlanList = new ArrayList<>();
         // Step 1: Get Order Plan Response and segregate with the DO Quantity
         // Step 1.1: Count no of DOs possible
@@ -125,12 +124,9 @@ public class OrderPlanService {
            doPlan.setDeliveryQuantity(doCount == 1 || index < doCount ? DO_QUANTITY : orderPlanResponse.getOrderQuantity() % DO_QUANTITY);
 
            // StartTime
-            LocalDateTime localDateStartTime = orderPlanResponse.getStartTime().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
-            LocalDateTime updatedStartTime = localDateStartTime.plusMinutes((long) (index-1) * orderPlanResponse.getIntervals());
+            Date startTimeAsDate = getStartTimeWithInterval(orderPlanResponse, index, timezone);
 
-           doPlan.setStartTime(Date.from(updatedStartTime.atZone(ZoneId.systemDefault()).toInstant()));
+            doPlan.setStartTime(startTimeAsDate);
 
            doPlan.setOrgPlantShortName(orderPlanResponse.getPlantName());
            doPlan.setNewPlantShortName(orderPlanResponse.getPlantName());
@@ -147,5 +143,34 @@ public class OrderPlanService {
 
         // Step 3: Return the list
         return doPlanList;
+    }
+
+    private static Date getStartTimeWithInterval(OrderPlanResponse orderPlanResponse, int index, String timezone) {
+        Date dbDate = orderPlanResponse.getStartTime();
+
+        // Step 1: Interpret DB value as LOCAL (IST)
+        LocalDateTime localWrong = LocalDateTime.ofInstant(
+                dbDate.toInstant(),
+                ZoneId.of(timezone)
+        );
+
+        // Step 2: Correct it — this local time is actually UTC
+        ZonedDateTime realUtc = localWrong.atZone(ZoneOffset.UTC);
+
+        // Step 3: Convert UTC → target timezone (IST)
+        ZonedDateTime correctLocal = realUtc.withZoneSameInstant(ZoneId.of(timezone));
+
+        // Step 4: Apply interval
+        ZonedDateTime updated = correctLocal.plusMinutes(
+                (long) (index - 1) * orderPlanResponse.getIntervals()
+        );
+
+
+        System.out.println("orderPlanResponse.getSTartTime():"+ orderPlanResponse.getStartTime());
+        System.out.println("JVM timezone: " +ZoneId.systemDefault() );
+        System.out.println("Timezone variable value:"+ timezone);
+
+        return Date.from(updated.toInstant());
+
     }
 }

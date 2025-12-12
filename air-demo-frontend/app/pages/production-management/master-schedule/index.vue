@@ -5,7 +5,14 @@
 	]);
 
 	const dateField = ref<string>("");
-	const searchFormRef = ref<{ getSearchFormValues: () => any } | null>(null);
+	const searchFormRef = ref<{
+		getSearchFormValues: () => any;
+		clearSearchFormValues: () => any;
+	} | null>(null);
+	const searchData = ref<any>({});
+	const timelineRef = ref<{
+		initTimeline: (customer: string, project: string, location: string) => any;
+	} | null>(null);
 
 	const timeLineTab = [
 		{
@@ -18,13 +25,26 @@
 		},
 	];
 
-	const handleRefresh = () => {};
+	const handleRefresh = () => {
+		timelineRef.value?.initTimeline(
+			searchData.value.customer,
+			searchData.value.project,
+			searchData.value.location
+		);
+	};
 
 	const handleSearch = () => {
-		const data = searchFormRef.value?.getSearchFormValues();
-		console.log("Search Data: ", data);
+		searchData.value = searchFormRef.value?.getSearchFormValues();
+		timelineRef.value?.initTimeline(
+			searchData.value.customer,
+			searchData.value.project,
+			searchData.value.location
+		);
+	};
 
-		// Handle Search logic here
+	const handleClear = () => {
+		searchFormRef?.value?.clearSearchFormValues();
+		handleRefresh();
 	};
 </script>
 
@@ -38,6 +58,7 @@
 			<div class="flex justify-end py-1 space-x-1 pr-2">
 				<UButton variant="outline" @click="handleRefresh"> Refresh </UButton>
 				<UButton @click="handleSearch"> Search </UButton>
+				<UButton variant="outline" @click="handleClear"> Clear </UButton>
 			</div>
 			<USeparator />
 			<production-management-master-schedule-search-form ref="searchFormRef" />
@@ -45,7 +66,12 @@
 		<UTabs :items="timeLineTab" variant="pill" :ui="{ trigger: 'grow' }" class="w-full mt-5 gap-0">
 			<template #order-view="{ item }">
 				<div>
-					<production-management-master-schedule-timeline />
+					<production-management-master-schedule-timeline
+						:customer-id="searchData.customer"
+						:project-id="searchData.project"
+						:location-id="searchData.location"
+						ref="timelineRef"
+					/>
 				</div>
 			</template>
 			<template #assigned-plant="{ item }">

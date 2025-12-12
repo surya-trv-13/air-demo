@@ -2,6 +2,7 @@ package com.panunited.airdemo.repositories;
 
 import com.panunited.airdemo.dto.OrderPlanAssigned;
 import com.panunited.airdemo.dto.OrderPlanAssignedProjection;
+import com.panunited.airdemo.dto.OrderPlanSearchParams;
 import com.panunited.airdemo.models.OrderPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -57,8 +58,11 @@ public interface OrderPlanRepository extends JpaRepository<OrderPlan, Long> {
             LEFT JOIN region r ON r.region_id = pl.region_id
             LEFT JOIN product pr ON pr.id = o.product_id
             WHERE o.id IN (26, 27, 30, 31, 32, 33)
+            AND (:customerId IS NULL OR c.id = :customerId)
+             AND (:locationId IS NULL OR l.id = :locationId)
+            AND (:projectId IS NULL OR p.id = :projectId)
             """, nativeQuery = true)
-    List<OrderPlanAssignedProjection> getOrderPlansAssign();
+    List<OrderPlanAssignedProjection> getOrderPlansAssign(Long customerId, Long locationId, Long projectId);
 
     @Query(value = """
                 SELECT OH.id order_id

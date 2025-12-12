@@ -4,29 +4,22 @@
 	import { Timeline, type DateType, type TimelineAlignType } from "vis-timeline";
 	import { DataSet } from "vis-data";
 	import { DoPlan, Grouping, OrderItem, type OrderPlan } from "~/types/timeline";
+
 	const timeline = ref<Timeline>();
-	let timelineInstance: Timeline | null = null;
 	const scheduleData = ref<OrderPlan[]>([]);
 	const groups = ref<DataSet<Grouping>>(new DataSet());
 	const items = ref<DataSet<OrderItem>>(new DataSet({}));
 	const timer = ref();
 
-	const option = reactive({
-		customerId: null,
-		projectId: null,
-		regionId: null,
-	});
+	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	onMounted(async () => {
-		const visTimeline = await import("vis-timeline");
 		const visData = await import("vis-data");
 
 		const { DataSet } = visData;
 
 		// Import styles
 		await import("vis-timeline/styles/vis-timeline-graph2d.min.css");
-
-		const items = new DataSet<{ id: number; content: string; start: Date; end: Date }>([]);
 
 		interface TimelineItem {
 			id: number;
@@ -117,8 +110,12 @@
 		vis.options.end = moment(new Date()).add(150, "m");
 	};
 
-	const initTimeline = async () => {
-		await getTimelineData();
+	const initTimeline = async (
+		customerId: string = "",
+		projectId: string = "",
+		locationId: string = ""
+	) => {
+		await getTimelineData(customerId, projectId, locationId);
 		processData();
 	};
 
@@ -162,10 +159,15 @@
 		timeline.value.setGroups(groups.value);
 		timeline.value.setCurrentTime(new Date());
 	};
-	const getTimelineData = async () => {
+	const getTimelineData = async (customerId: string, projectId: string, locationId: string) => {
 		const response: OrderPlan[] = await $fetch("/api/order-plan/plans", {
 			method: "GET",
-			params: option,
+			params: {
+				customerId: customerId,
+				projectId: projectId,
+				locationId: locationId,
+				timezone: timezone,
+			},
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
@@ -179,6 +181,10 @@
 		if (timer.value) {
 			clearInterval(timer.value);
 		}
+	});
+
+	defineExpose({
+		initTimeline,
 	});
 
 	loadData();

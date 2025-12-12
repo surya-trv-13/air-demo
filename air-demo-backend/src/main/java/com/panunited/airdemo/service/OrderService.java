@@ -483,6 +483,7 @@ public class OrderService {
         // 2. Set the time of Order Date to current Date
         first2Orders.forEach (order -> {
             order.setOrderDate (LocalDate.now ());
+            order.setOrderDateTimeUtc(DateTimeUtil.convertCurrentSystemToUtcTimeZone(LocalDateTime.of(order.getOrderDate(), order.getStartTime())));
         });
         // 3. Save the order ion the database
         orderRepository.saveAll (first2Orders);
