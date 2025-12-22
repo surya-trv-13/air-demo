@@ -14,6 +14,18 @@
 				label: "Order Schedule Plant",
 				to: "/production-management/master-schedule",
 			},
+			{
+				label: "Fleet Dashboard",
+				to: "/fleet-management/dashboard",
+			},
+			{
+				label: "Logistics Forecast",
+				to: "/logistics-forecast",
+			},
+			{
+				label: "Inventory Management",
+				to: "/inventory-management",
+			},
 		],
 	]);
 </script>
