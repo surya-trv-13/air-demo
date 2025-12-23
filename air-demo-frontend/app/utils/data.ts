@@ -499,3 +499,19 @@ export const customerContactMenu: { [key: string]: CustomerContact[] } = {
 		},
 	],
 };
+
+export const truckSelectMenu = ref<Partial<InputMenuItem>[]>([
+	{
+		label: "91",
+		id: 91,
+	},
+	{
+		label: "92",
+		id: 92,
+	},
+]);
+
+export const driverSelectMenu = ref<Partial<InputMenuItem>[]>([
+	{ label: "15192 - Robert Langton", id: 1 },
+	{ label: "15193 - Swift Concert", id: 2 },
+]);

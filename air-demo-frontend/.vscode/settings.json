@@ -7,5 +7,16 @@
 	},
 	"tailwindCSS.classAttributes": ["class", "ui"],
 	"tailwindCSS.experimental.classRegex": [["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
-	"cSpell.words": ["boxlayout", "itemover", "lucide", "Nuxt", "reka", "timechanged", "zoomable"]
+	"cSpell.words": [
+		"boxlayout",
+		"Gujrant",
+		"Ioane",
+		"itemover",
+		"lucide",
+		"Nuxt",
+		"Pintone",
+		"reka",
+		"timechanged",
+		"zoomable"
+	]
 }

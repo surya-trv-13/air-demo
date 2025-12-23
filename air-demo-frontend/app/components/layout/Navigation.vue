@@ -26,6 +26,10 @@
 				label: "Inventory Management",
 				to: "/inventory-management",
 			},
+			{
+				label: "Truck Tracing",
+				to: "/truck-tracing",
+			},
 		],
 	]);
 </script>
