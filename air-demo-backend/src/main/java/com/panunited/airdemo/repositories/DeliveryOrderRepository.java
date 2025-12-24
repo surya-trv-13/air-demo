@@ -33,4 +33,6 @@ public interface DeliveryOrderRepository extends JpaRepository<DeliveryOrder, Lo
 			FROM ORDER_QUANTITY, ASSIGNED_QUANTITY;
 			""", nativeQuery = true)
     Double getUnassignedOrderQuantityForMergeOrder(Long mergeOrderId);
+
+	DeliveryOrder findByDoNumber(String doNumber);
 }

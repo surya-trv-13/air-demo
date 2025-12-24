@@ -184,7 +184,7 @@ export const truckHistory: Record<string, TruckTracingDetails[]> = {
 		},
 		{
 			remark: "[Robert Langton - 92] approve to report to next plant [Plant 2 - 15]",
-			createdDate: "00:19:18.227Z",
+			createdDate: "00:19:18",
 		},
 		{
 			remark: "[Robert Langton - 92] is available now",
@@ -234,7 +234,7 @@ export const truckHistory: Record<string, TruckTracingDetails[]> = {
 		},
 		{
 			remark: "[ Swift Concert - 91] approve to report to next plant [Plant 1 - 23]",
-			createdDate: "01:51:59.510Z",
+			createdDate: "01:51:59",
 		},
 		{
 			remark: "[ Swift Concert - 91] ended rest",
@@ -254,7 +254,7 @@ export const truckHistory: Record<string, TruckTracingDetails[]> = {
 		},
 		{
 			remark: "[ Swift Concert - 91] is available now",
-			createdDate: "00:42:38.287Z",
+			createdDate: "00:42:38",
 		},
 		{
 			remark: "[ Swift Concert - 91] completed job [234306] at site [676 Houston Road]",
@@ -288,44 +288,44 @@ export const truckHistory: Record<string, TruckTracingDetails[]> = {
 		},
 		{
 			remark: "[ Swift Concert - 91] logged out",
-			createdDate: "21:14:52.117Z",
+			createdDate: "21:14:52",
 		},
 		{
 			remark: "[ Swift Concert - 91] has joined queue at plant [Plant 1 - 23]",
-			createdDate: "21:14:14.387Z",
+			createdDate: "21:14:14",
 		},
 		{
 			remark: "[ Swift Concert - 91] approve to report to next plant [Plant 1 - 23]",
-			createdDate: "21:14:12.627Z",
+			createdDate: "21:14:12",
 		},
 		{
 			remark: "[Swift Concert - 91] is available now",
-			createdDate: "21:14:06.593Z",
+			createdDate: "21:14:06",
 		},
 		{
 			remark:
 				"[ Swift Concert - 91] completed job [234287] at site [1226 State Highway 16, Waimauku 0883, New Zealand]",
-			createdDate: "21:14:06.547Z",
+			createdDate: "21:14:06",
 		},
 		{
 			remark: "[ Swift Concert - 91] logged in",
-			createdDate: "21:13:49.797Z",
+			createdDate: "21:13:49",
 		},
 		{
 			remark: "[ Swift Concert - 91] received job [234287] at plant [Plant 1 - 23]",
-			createdDate: "20:09:44.190Z",
+			createdDate: "20:09:44",
 		},
 		{
 			remark: "[ Swift Concert - 91] called by batcher at plant [Plant 1 - 23]",
-			createdDate: "20:09:16.633Z",
+			createdDate: "20:09:16",
 		},
 		{
 			remark: "[ Swift Concert - 91] has joined queue at plant [Plant 1 - 23]",
-			createdDate: "16:39:52.287Z",
+			createdDate: "16:39:52",
 		},
 		{
 			remark: "[ Swift Concert - 91] logged in",
-			createdDate: "16:39:48.667Z",
+			createdDate: "16:39:48",
 		},
 	],
 };
