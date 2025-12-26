@@ -1,5 +1,7 @@
 <script setup lang="ts">
 	import moment from "moment";
+	import InfoModal from "~/components/fleet-management/InfoModal.vue";
+	import type { Driver } from "~/types/driver";
 	import { summary } from "~/utils/fleetDashboardData";
 
 	const breadcrumbItems = ref([{ label: "Fleet Dashboard", to: "/fleet-management/dashboard" }]);
@@ -9,12 +11,40 @@
 		endTime: moment().add(2, "hours").format("HH:mm"),
 	});
 
+	const isOpen = ref(false);
+	const drivers = ref<Driver[]>([]);
+	const overlay = useOverlay();
+
 	const pagination = ref({
 		pageIndex: 0,
 		pageSize: 5,
 	});
 
-	const handleInfoClick = () => {};
+	const handleInfoClick = (active: string, status: string, zone: string) => {
+		const driverData = [];
+
+		for (let record of driver_full_data) {
+			if (
+				record.active == active &&
+				(status == "" || record.status == status) &&
+				(zone == "" || record.zone == zone)
+			)
+				driverData.push(record);
+		}
+
+		console.log(driverData);
+		console.log("Opening modal:", isOpen.value);
+		drivers.value = driverData;
+		const modal = overlay.create(InfoModal, {
+			props: {
+				infoText: `Driver Information - ${active} ${status} ${zone}`,
+				drivers: driverData,
+			},
+		});
+
+		modal.open();
+		console.log("Modal should be open:", isOpen.value);
+	};
 </script>
 <template>
 	<div class="w-full h-full py-14 px-5">
@@ -32,7 +62,7 @@
 						icon="i-lucide-info"
 						variant="outline"
 						class="rounded-full p-0 bg-transparent"
-						@click="handleInfoClick"
+						@click="handleInfoClick('Active', '', '')"
 					/>
 				</div>
 				<div class="px-4 flex items-center gap-1">
@@ -41,7 +71,7 @@
 						icon="i-lucide-info"
 						variant="outline"
 						class="rounded-full p-0 bg-transparent"
-						@click="handleInfoClick"
+						@click="handleInfoClick('Active', 'At Plant', '')"
 					/>
 				</div>
 				<div class="px-4 flex items-center gap-1">
@@ -50,7 +80,7 @@
 						icon="i-lucide-info"
 						variant="outline"
 						class="rounded-full p-0 bg-transparent"
-						@click="handleInfoClick"
+						@click="handleInfoClick('Active', 'Returning [≤30mins]', '')"
 					/>
 				</div>
 				<div class="px-4 flex items-center gap-1">
@@ -59,7 +89,7 @@
 						icon="i-lucide-info"
 						variant="outline"
 						class="rounded-full p-0 bg-transparent"
-						@click="handleInfoClick"
+						@click="handleInfoClick('Inactive', '', '')"
 					/>
 				</div>
 			</div>

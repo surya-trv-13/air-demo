@@ -8,11 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @ToString

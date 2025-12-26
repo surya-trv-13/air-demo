@@ -7,12 +7,12 @@ import com.panunited.airdemo.enums.EModificationIssue;
 import com.panunited.airdemo.utils.DateTimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
