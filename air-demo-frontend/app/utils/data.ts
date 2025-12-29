@@ -186,20 +186,32 @@ export const prioritySelectMenu = ref<Partial<InputMenuItem>[]>([
 
 export const locationSelectMenu = ref<Partial<InputMenuItem>[]>([
 	{
-		label: "Location 1",
+		label: "Flamingo Rd & University Center Dr",
 		id: 1,
 	},
 	{
-		label: "Location 2",
+		label: "Dugong Dr & Russell Rd",
 		id: 2,
 	},
 	{
-		label: "Location 3",
+		label: "Koval Ln & Harmon Ave",
 		id: 3,
 	},
 	{
-		label: "Location 4",
+		label: "Flamingo Rd & Eastern Ave",
 		id: 4,
+	},
+	{
+		label: "Las Vegas Blvd & Warm Springs Rd",
+		id: 7,
+	},
+	{
+		label: "Apex Industrial Pkwy",
+		id: 12,
+	},
+	{
+		label: "Via Inspirada & Volunteer",
+		id: 13,
 	},
 ]);
 
@@ -232,54 +244,54 @@ export const customerSelectMenu = ref<Partial<InputMenuItem>[]>([
 		id: 1,
 	},
 	{
-		label: "Anne Pte Ltd",
+		label: "Silver Mesa Builders",
 		id: 2,
 	},
 	{
-		label: "Alvin Home Builder",
+		label: "Desert Crest Construction",
 		id: 3,
 	},
 	{
-		label: "Mui Mui Builders",
+		label: "Mojave Structural Partners",
 		id: 4,
 	},
 ]);
 
 export const projectSelectMenu = ref<Partial<InputMenuItem>[]>([
 	{
-		label: "Project 1",
+		label: "Mirage Ridge Podium",
 		id: 1,
 	},
 	{
-		label: "Project 2",
+		label: "Neon Vista Apartment",
 		id: 2,
 	},
 	{
-		label: "Project 3",
+		label: "Sandsline Parking Garage",
 		id: 3,
 	},
 	{
-		label: "Project 4",
+		label: "Flamingo Road Improvement",
 		id: 4,
 	},
 	{
-		label: "Project 5",
+		label: "Aurora Palms Hotel Tower",
 		id: 5,
 	},
 	{
-		label: "Project 6",
+		label: "Apex Data Center Pads",
 		id: 6,
 	},
 	{
-		label: "Project 7",
+		label: "Cactus Wren Homes",
 		id: 7,
 	},
 	{
-		label: "Project 8",
+		label: "Sloan Logistics Warehouse",
 		id: 8,
 	},
 	{
-		label: "Project 9",
+		label: "Fremont Street Retrofit",
 		id: 9,
 	},
 ]);
@@ -322,28 +334,28 @@ export const dischargeMethodSelectMenu = ref<Partial<InputMenuItem>[]>([
 export const productSelectMenuData = ref<Partial<InputMenuItem>[]>([
 	{
 		id: 1,
-		label: "Product 1",
-		description: "10 MPa 10mm",
+		label: "GR 20 SL 50-90MM",
+		description: "EN2002",
 	},
 	{
 		id: 2,
-		label: "Product 2",
-		description: " 10 MPa 16mm",
+		label: "GR 30 SL 50-90MM",
+		description: "EN3002",
 	},
 	{
 		id: 3,
-		label: "Product 3",
-		description: "10 MPa 20mm",
+		label: "GR 30 SL 100-150MM",
+		description: "EN3003",
 	},
 	{
 		id: 4,
-		label: "Product 4",
-		description: "1710",
+		label: "GR 35 SL 50-90MM",
+		description: "EN3502",
 	},
 	{
 		id: 5,
-		label: "Product 5",
-		description: "15 MPa 20mm",
+		label: "GR 40 SL 50-90MM",
+		description: "EN4002",
 	},
 ]);
 
@@ -404,23 +416,23 @@ export const structureSelectMenu = ref<Partial<InputMenuItem>[]>([
 
 export const plantSelectMenu = ref<Partial<InputMenuItem>[]>([
 	{
-		label: "Plant 1",
+		label: "North Las Vegas",
 		id: 1,
 	},
 	{
-		label: "Plant 2",
+		label: "Paradise",
 		id: 2,
 	},
 	{
-		label: "Plant 3",
+		label: "Spring Valley",
 		id: 3,
 	},
 	{
-		label: "Plant 4",
+		label: "Summerlin",
 		id: 4,
 	},
 	{
-		label: "Plant 5",
+		label: "Henderson",
 		id: 5,
 	},
 ]);
