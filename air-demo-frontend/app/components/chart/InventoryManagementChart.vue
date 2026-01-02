@@ -199,7 +199,7 @@
 					data: reorderTimeData,
 					borderColor: "rgb(229, 115, 115)",
 					backgroundColor: "rgb(229, 115, 115)",
-					pointRadius: 8,
+					pointRadius: 5,
 					pointStyle: "circle",
 					showLine: false,
 					datalabels: {
@@ -212,8 +212,8 @@
 						color: "rgb(229, 115, 115)",
 						font: {
 							family: "Titillium Web, sans-serif",
-							size: 16,
-							weight: "bold",
+							size: 14,
+							weight: "lighter",
 						},
 						formatter: (value: any, context: any) => {
 							return reorderLabelsAligned[context.dataIndex] || "";

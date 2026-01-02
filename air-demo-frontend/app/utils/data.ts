@@ -30,6 +30,11 @@ export const orderColumn: TableColumn<Order>[] = [
 	{
 		accessorKey: "address",
 		header: "Location",
+		cell: ({ row }) => {
+			const address = row.getValue("address") as string;
+			console.log("Address:", address);
+			return address.length > 25 ? address.substring(0, 20) + "..." : address;
+		},
 	},
 	{
 		accessorKey: "orderDate",
@@ -42,10 +47,12 @@ export const orderColumn: TableColumn<Order>[] = [
 	{
 		accessorKey: "productCode",
 		header: "Product Code",
+		maxSize: 20,
+		size: 15,
 	},
 	{
 		accessorKey: "orderQuantity",
-		header: "Order Quantity",
+		header: "Order Qty",
 	},
 	{
 		accessorKey: "testType",

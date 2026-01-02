@@ -10,9 +10,10 @@
 		LinearScale,
 	} from "chart.js";
 	import type { ChartOptions, ChartData } from "chart.js";
+	import ChartDataLabels from "chartjs-plugin-datalabels";
 
 	// Register Chart.js components
-	ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+	ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 
 	const props = defineProps<{
 		labels: string[];
@@ -22,53 +23,34 @@
 	}>();
 
 	const data = computed<ChartData<"bar", (number | [number, number] | null)[]>>(() => ({
-		labels: props.labels,
+		labels: ["At Plant", "Returning", "Requirement", "Excess/Shortage"], // Use these labels directly
 		datasets: [
 			{
-				label: "At Plant",
-				data: [[0, props.atPlant] as [number, number], null, null, null],
-				backgroundColor: "rgb(75,192,192)",
-				borderColor: "rgb(75,192,192)",
-				borderWidth: 2,
-				barPercentage: 0.9,
-				categoryPercentage: 0.9,
-			},
-			{
-				label: "Returning",
+				label: "Inventory",
 				data: [
-					null,
+					[0, props.atPlant] as [number, number],
 					[props.atPlant, props.atPlant + props.returning] as [number, number],
-					null,
-					null,
-				],
-				backgroundColor: "rgb(75,164,187)",
-				borderColor: "rgb(75,164,187)",
-				borderWidth: 2,
-				barPercentage: 0.9,
-				categoryPercentage: 0.9,
-			},
-			{
-				label: "Requirement",
-				data: [null, null, [-props.requirement, 0] as [number, number], null],
-				backgroundColor: "rgb(196,92,150)",
-				borderColor: "rgb(196,92,150)",
-				borderWidth: 2,
-				barPercentage: 0.9,
-				categoryPercentage: 0.9,
-			},
-			{
-				label: "Excess/Shortage",
-				data: [
-					null,
-					null,
-					null,
+					[
+						props.atPlant + props.returning,
+						props.atPlant + props.returning - props.requirement,
+					] as [number, number],
 					[0, props.atPlant + props.returning - props.requirement] as [number, number],
 				],
-				backgroundColor: "rgb(255,136,0)",
-				borderColor: "rgb(255,136,0)",
-				borderWidth: 2,
-				barPercentage: 0.9,
-				categoryPercentage: 0.9,
+				backgroundColor: [
+					"rgba(75,192,192, 0.5)",
+					"rgba(75,164,187, 0.5)",
+					"rgba(196,92,150, 0.5)",
+					"rgba(255,136,0, 0.5)",
+				],
+				borderColor: [
+					"rgba(75,192,192, 1)",
+					"rgba(75,164,187, 1)",
+					"rgba(196,92,150, 1)",
+					"rgba(255,136,0, 1)",
+				],
+				borderWidth: 0.5,
+				barThickness: 80,
+				maxBarThickness: 80,
 			},
 		],
 	}));
@@ -79,6 +61,10 @@
 		scales: {
 			x: {
 				stacked: false,
+				grid: {
+					offset: false,
+				},
+				beginAtZero: false,
 			},
 			y: {
 				stacked: false,
@@ -88,9 +74,7 @@
 		layout: {
 			padding: {
 				top: 0,
-				right: 5,
 				bottom: 0,
-				left: 5,
 			},
 		},
 		plugins: {
@@ -110,6 +94,21 @@
 						}
 						return `${label}: ${value}`;
 					},
+				},
+			},
+			datalabels: {
+				color: "#000",
+				font: {
+					weight: "bold",
+				},
+				anchor: "center",
+				align: "center",
+				formatter: (value) => {
+					if (Array.isArray(value)) {
+						const diff = value[1] - value[0];
+						return diff === 0 ? "" : diff;
+					}
+					return "";
 				},
 			},
 		},

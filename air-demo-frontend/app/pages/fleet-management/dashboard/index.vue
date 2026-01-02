@@ -2,9 +2,18 @@
 	import moment from "moment";
 	import InfoModal from "~/components/fleet-management/InfoModal.vue";
 	import type { Driver } from "~/types/driver";
-	import { summary } from "~/utils/fleetDashboardData";
 
 	const breadcrumbItems = ref([{ label: "Fleet Dashboard", to: "/fleet-management/dashboard" }]);
+
+	const summary = {
+		active: 0,
+		at_plant: 0,
+		returning_30: 0,
+		returning_2hr: 0,
+		requirement_30: 0,
+		requirement_2hr: 0,
+		inactive: 0,
+	};
 
 	const params = ref({
 		startTime: moment().format("HH:mm"),
@@ -33,7 +42,6 @@
 		}
 
 		console.log(driverData);
-		console.log("Opening modal:", isOpen.value);
 		drivers.value = driverData;
 		const modal = overlay.create(InfoModal, {
 			props: {
@@ -43,7 +51,41 @@
 		});
 
 		modal.open();
-		console.log("Modal should be open:", isOpen.value);
+	};
+
+	onMounted(() => {
+		initSummary();
+	});
+
+	const initSummary = () => {
+		//driver summary
+		for (let record of driver_full_data) {
+			if (record.active == "Active") {
+				summary.active++;
+			} else {
+				summary.inactive++;
+			}
+
+			const status = record.status;
+			if (status == "At Plant") {
+				summary.at_plant++;
+			} else if (status == "Returning [≤30mins]") {
+				summary.returning_30++;
+				summary.returning_2hr++;
+			} else if (status == "Returning [>30mins]") {
+				summary.returning_2hr++;
+			}
+		}
+
+		//requirement summary
+		for (let record of zoneRequirement.value) {
+			summary.requirement_30 += record.requirement_30;
+			summary.requirement_2hr += record.requirement_30 + record.requirement_aft_30;
+		}
+
+		console.log("summary.at_plant" + summary.at_plant);
+		console.log("summary.returning_2hr" + summary.returning_2hr);
+		console.log("summary.requirement_2hr" + summary.requirement_2hr);
 	};
 </script>
 <template>
@@ -96,6 +138,7 @@
 		</div>
 		<div class="mb-4 flex gap-2.5">
 			<div class="h-[inherit] flex-1">
+				<p class="w-full text-center mb-1">Next 30 Minutes</p>
 				<ChartStackedChart
 					:labels="['At Plant', 'Returning [≤30mins]', 'Required [≤30mins]', 'Excess/Shortage']"
 					:at-plant="summary.at_plant"
@@ -104,10 +147,11 @@
 				/>
 			</div>
 			<div class="h-[inherit] flex-1">
+				<p class="w-full text-center mb-1">Next 2 Hours</p>
 				<ChartStackedChart
 					:labels="['At Plant', 'Returning', 'Required', 'Excess/Shortage']"
 					:at-plant="summary.at_plant"
-					:returning="summary.requirement_2hr"
+					:returning="summary.returning_2hr"
 					:requirement="summary.requirement_2hr"
 				/>
 			</div>
